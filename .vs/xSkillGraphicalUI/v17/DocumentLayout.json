@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|d:\\project\\vintagestory mods\\xskillgraphicalui\\xskillgraphicalui\\xskillgraphicalui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|solutionrelative:xskillgraphicalui\\xskillgraphicalui\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|d:\\project\\vintagestory mods\\xskillgraphicalui\\xskillgraphicalui\\xskillgraphicalui\\imguiutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|solutionrelative:xskillgraphicalui\\xskillgraphicalui\\imguiutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|d:\\project\\vintagestory mods\\xskillgraphicalui\\xskillgraphicalui\\xskillgraphicalui\\resourceloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|solutionrelative:xskillgraphicalui\\xskillgraphicalui\\resourceloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|d:\\project\\vintagestory mods\\xskillgraphicalui\\xskillgraphicalui\\xskillgraphicalui\\font.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|solutionrelative:xskillgraphicalui\\xskillgraphicalui\\font.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|d:\\project\\vintagestory mods\\xskillgraphicalui\\xskillgraphicalui\\xskillgraphicalui\\vtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI.csproj|solutionrelative:xskillgraphicalui\\xskillgraphicalui\\vtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "VTML.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\VTML.cs",
+              "RelativeDocumentMoniker": "xSkillGraphicalUI\\xSkillGraphicalUI\\VTML.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\VTML.cs",
+              "RelativeToolTip": "xSkillGraphicalUI\\xSkillGraphicalUI\\VTML.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAAAFIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-26T11:41:21.291Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "resourceLoader.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\resourceLoader.cs",
+              "RelativeDocumentMoniker": "xSkillGraphicalUI\\xSkillGraphicalUI\\resourceLoader.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\resourceLoader.cs",
+              "RelativeToolTip": "xSkillGraphicalUI\\xSkillGraphicalUI\\resourceLoader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T01:20:56.044Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "font.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\font.cs",
+              "RelativeDocumentMoniker": "xSkillGraphicalUI\\xSkillGraphicalUI\\font.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\font.cs",
+              "RelativeToolTip": "xSkillGraphicalUI\\xSkillGraphicalUI\\font.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAFEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T01:20:38.81Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ImGuiUtil.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\ImGuiUtil.cs",
+              "RelativeDocumentMoniker": "xSkillGraphicalUI\\xSkillGraphicalUI\\ImGuiUtil.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\ImGuiUtil.cs",
+              "RelativeToolTip": "xSkillGraphicalUI\\xSkillGraphicalUI\\ImGuiUtil.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAFYAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T08:45:41.904Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\main.cs",
+              "RelativeDocumentMoniker": "xSkillGraphicalUI\\xSkillGraphicalUI\\main.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGraphicalUI\\xSkillGraphicalUI\\xSkillGraphicalUI\\main.cs",
+              "RelativeToolTip": "xSkillGraphicalUI\\xSkillGraphicalUI\\main.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAuwJoCAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T05:33:28.195Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

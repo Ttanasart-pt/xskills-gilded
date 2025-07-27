@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Project\\VintageStory Mods\\xSkillGilded\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|d:\\project\\vintagestory mods\\xskillgilded\\xskillgilded\\xskillgilded\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|solutionrelative:xskillgilded\\xskillgilded\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|d:\\project\\vintagestory mods\\xskillgilded\\xskillgilded\\xskillgilded\\font.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|solutionrelative:xskillgilded\\xskillgilded\\font.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|d:\\project\\vintagestory mods\\xskillgilded\\xskillgilded\\xskillgilded\\imguiutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|solutionrelative:xskillgilded\\xskillgilded\\imguiutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|d:\\project\\vintagestory mods\\xskillgilded\\xskillgilded\\xskillgilded\\resourceloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|solutionrelative:xskillgilded\\xskillgilded\\resourceloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|d:\\project\\vintagestory mods\\xskillgilded\\xskillgilded\\xskillgilded\\levelpopup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7C38C32-0A43-46FB-82EF-DE9E8A1B9D87}|xSkillGilded\\xSkillGilded\\xSkillGilded.csproj|solutionrelative:xskillgilded\\xskillgilded\\levelpopup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "levelPopup.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\levelPopup.cs",
+              "RelativeDocumentMoniker": "xSkillGilded\\xSkillGilded\\levelPopup.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\levelPopup.cs",
+              "RelativeToolTip": "xSkillGilded\\xSkillGilded\\levelPopup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T08:46:16.996Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "font.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\font.cs",
+              "RelativeDocumentMoniker": "xSkillGilded\\xSkillGilded\\font.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\font.cs",
+              "RelativeToolTip": "xSkillGilded\\xSkillGilded\\font.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T00:43:43.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ImGuiUtil.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\ImGuiUtil.cs",
+              "RelativeDocumentMoniker": "xSkillGilded\\xSkillGilded\\ImGuiUtil.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\ImGuiUtil.cs",
+              "RelativeToolTip": "xSkillGilded\\xSkillGilded\\ImGuiUtil.cs",
+              "ViewState": "AgIAANIAAAAAAAAAAAAAAO0AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T00:27:59.964Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "resourceLoader.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\resourceLoader.cs",
+              "RelativeDocumentMoniker": "xSkillGilded\\xSkillGilded\\resourceLoader.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\resourceLoader.cs",
+              "RelativeToolTip": "xSkillGilded\\xSkillGilded\\resourceLoader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-26T13:27:39.894Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cs",
+              "DocumentMoniker": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\main.cs",
+              "RelativeDocumentMoniker": "xSkillGilded\\xSkillGilded\\main.cs",
+              "ToolTip": "D:\\Project\\VintageStory Mods\\xSkillGilded\\xSkillGilded\\xSkillGilded\\main.cs",
+              "RelativeToolTip": "xSkillGilded\\xSkillGilded\\main.cs",
+              "ViewState": "AgIAADYDAAAAAAAAAAAuwFEDAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-26T13:27:36.351Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
