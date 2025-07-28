@@ -35,15 +35,18 @@ namespace xSkillGilded {
 
         public Font() {}
         public float letterSpacing = 0;
-        public float lineHeight    = 0;
         public float spaceWidth    = 0;
+        public float baseScale     = 1;
+        public float baseLineHeight;
+
+        public float getLineHeight() { return baseLineHeight * baseScale; } 
 
         public bool hasFallbackColor = false;
         public Vector4 fallbackColor;
 
         public Font LoadedTexture(ICoreClientAPI api, LoadedTexture texture, string jsonMap) {
             this.texture = texture;
-            lineHeight = 0;
+            baseLineHeight = 0;
 
             atlas = new Dictionary<char, atlasBBOX>();
             atlasJson[] data = JsonSerializer.Deserialize<atlasJson[]>(jsonMap);
@@ -59,7 +62,7 @@ namespace xSkillGilded {
 
                 float w = d.width;
                 float h = d.height;
-                lineHeight = Math.Max(lineHeight, h);
+                baseLineHeight = Math.Max(baseLineHeight, h);
 
                 if(ch == 'l') spaceWidth = w;
 
@@ -96,6 +99,9 @@ namespace xSkillGilded {
                 size.Y  = Math.Max(size.Y, bbox.size.Y);
             }
 
+            size.X *= baseScale;
+            size.Y *= baseScale;
+
             return size;
         }
 
@@ -108,8 +114,8 @@ namespace xSkillGilded {
             if(!atlas.ContainsKey(c)) return 0;
 
             atlasBBOX box = atlas[c];
-            ImGui.Image(texture.TextureId, box.size, box.uv0, box.uv1);
-            return box.size.X + letterSpacing;
+            ImGui.Image(texture.TextureId, new(box.size.X * baseScale, box.size.Y * baseScale), box.uv0, box.uv1);
+            return (box.size.X + letterSpacing) * baseScale;
         }
         
         public float drawCharColor(char c, Vector4 color) {
@@ -121,8 +127,8 @@ namespace xSkillGilded {
             if(!atlas.ContainsKey(c)) return 0;
 
             atlasBBOX box = atlas[c];
-            ImGui.Image(texture.TextureId, box.size, box.uv0, box.uv1, color);
-            return box.size.X + letterSpacing;
+            ImGui.Image(texture.TextureId, new(box.size.X * baseScale, box.size.Y * baseScale), box.uv0, box.uv1, color);
+            return (box.size.X + letterSpacing) * baseScale;
         }
     }
 }

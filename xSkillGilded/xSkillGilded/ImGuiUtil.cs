@@ -21,6 +21,8 @@ namespace xSkillGilded {
     }
 
     internal static class ImGuiUtil {
+        public const float baseUiScale = 1.125f;
+        public static float uiScale = 1.125f;
 
         public static Font fTitle, fTitleGold;
         public static Font fSubtitle, fSubtitleGold;
@@ -74,6 +76,7 @@ namespace xSkillGilded {
             }
 
             Vector2 textSize = font.CalcTextSize(text);
+            
             float textWidth  = textSize.X;
             float textHeight = textSize.Y;
 
@@ -175,7 +178,7 @@ namespace xSkillGilded {
                 lines.Add(currentLine.Trim());
 
             float totalWidth  = 0;
-            float totalHeight = lines.Count * font.lineHeight;
+            float totalHeight = lines.Count * font.getLineHeight();
 
             foreach (string line in lines) {
                 float lineWidth = font.CalcTextSize(line).X;
@@ -204,7 +207,7 @@ namespace xSkillGilded {
                     float w = font.drawCharColor(c, drawCurrentColor);
                     _x += w;
                 }
-                _y += font.lineHeight;
+                _y += font.getLineHeight();
             }
 
             return totalHeight;
@@ -259,6 +262,7 @@ namespace xSkillGilded {
         }
         #endregion
 
+        #region image
         public static void drawImage(LoadedTexture texture, float x, float y, float width, float height) {
             if (texture == null) return;
             ImGui.SetCursorPos(new (x, y));
@@ -366,6 +370,7 @@ namespace xSkillGilded {
             drawImage(resourceLoader.Sprite("xSkillGilded:textures/gui/skilltree/elements/pixel.png"), x, y, width * progress, height);
             drawSetColor(Vector4.One);
         }
+        #endregion
 
         #region IO
         public static bool mouseHover(float x0, float y0, float x1, float y1) {
@@ -374,6 +379,8 @@ namespace xSkillGilded {
         #endregion
 
         #region Utils
+        public static float _ui(float v) { return v / baseUiScale * uiScale; }
+
         public static float lerpTo(float a, float b, float t, float dt) {
             if(Math.Abs(a - b) < 0.01f) return b;
 

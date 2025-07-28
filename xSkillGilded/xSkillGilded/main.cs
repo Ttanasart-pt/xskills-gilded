@@ -20,7 +20,6 @@ using Vintagestory.GameContent;
 using VSImGui;
 using VSImGui.API;
 using XLib.XLeveling;
-using static System.Net.WebRequestMethods;
 using static xSkillGilded.ImGuiUtil;
 
 namespace xSkillGilded {
@@ -40,17 +39,16 @@ namespace xSkillGilded {
 
         Dictionary<PlayerSkill, int> previousLevels;
         
-        const int checkAPIInterval   = 1000;
-        const int checkLevelInterval = 100;
-        private long checkAPIID, checkLevelID;
+        const int checkAPIInterval = 1000;
+        private long checkAPIID;
         bool isReady = false;
 
         bool metaPage = false;
         public bool isOpen = false;
         int windowX      = 0;
         int windowY      = 0;
-        int windowWidth  = 1800;
-        int windowHeight = 1060;
+        int windowBaseWidth  = 1800;
+        int windowBaseHeight = 1060;
         Stopwatch stopwatch;
         
         Dictionary<string, AbilityButton> abilityButtons;
@@ -74,8 +72,6 @@ namespace xSkillGilded {
         AbilityButton hoveringButton;
         TooltipObject hoveringTooltip = null;
         string hoveringID = null;
-
-        levelPopup LevelUpPopup;
 
         Vector4 c_white  = new(1);
         Vector4 c_dkgrey = hexToVec4("392a1c");
@@ -106,10 +102,10 @@ namespace xSkillGilded {
 
             useInternalTextDrawer = Lang.UsesNonLatinCharacters(Lang.CurrentLocale);
             if(!useInternalTextDrawer) {
-                fTitle.lineHeight        = ImGui.GetTextLineHeight();
-                fTitleGold.lineHeight    = ImGui.GetTextLineHeight();
-                fSubtitle.lineHeight     = ImGui.GetTextLineHeight();
-                fSubtitleGold.lineHeight = ImGui.GetTextLineHeight();
+                fTitle.baseLineHeight        = ImGui.GetTextLineHeight();
+                fTitleGold.baseLineHeight    = ImGui.GetTextLineHeight();
+                fSubtitle.baseLineHeight     = ImGui.GetTextLineHeight();
+                fSubtitleGold.baseLineHeight = ImGui.GetTextLineHeight();
             }
 
             tooltipVTML   = new List<VTMLblock>();
@@ -122,10 +118,6 @@ namespace xSkillGilded {
             checkAPIID   = api.Event.RegisterGameTickListener(onCheckAPI,   checkAPIInterval);
             // checkLevelID = api.Event.RegisterGameTickListener(onCheckLevel, checkLevelInterval);
 
-        }
-
-        public override void AssetsLoaded(ICoreAPI api) {
-            
         }
 
         public void initFonts(HashSet<string> fonts, HashSet<int> sizes) {
@@ -214,7 +206,7 @@ namespace xSkillGilded {
         private void setPageContent() {
             abilityButtons = new Dictionary<string, AbilityButton>();
 
-            float pad  = buttonPad;
+            float pad = buttonPad;
 
             List<int> levelTiers  = new List<int>();
             List<int> buttonTiers = new List<int>();
@@ -384,15 +376,24 @@ namespace xSkillGilded {
             IXPlatformInterface xPlatform = api.Forms;
             Size2i size = xPlatform.GetScreenSize();
 
+            uiScale = ClientSettings.GUIScale;
+
+            if(!useInternalTextDrawer) {
+                fTitle.baseScale        = _ui(1);
+                fTitleGold.baseScale    = _ui(1);
+                fSubtitle.baseScale     = _ui(1);
+                fSubtitleGold.baseScale = _ui(1);
+            }
+
             ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding,   0);
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding,    0);
             ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding,    0);
-            
-            windowWidth  = Math.Min(windowWidth,  (int)window.OuterWidth  - 128); // 160
-            windowHeight = Math.Min(windowHeight, (int)window.OuterHeight - 128); // 160
-            windowX = (int)window.absOffsetX + (int)size.Width / 2 - windowWidth / 2;
-            windowY = (int)window.absOffsetY + (int)size.Height / 2 - windowHeight / 2;
+
+            int windowWidth  = Math.Min(windowBaseWidth,  (int)window.OuterWidth  - 128); // 160
+            int windowHeight = Math.Min(windowBaseHeight, (int)window.OuterHeight - 128); // 160
+            windowX = (int)window.absOffsetX + size.Width / 2 - windowWidth / 2;
+            windowY = (int)window.absOffsetY + size.Height / 2 - windowHeight / 2;
             
             windowPosX = windowX;
             windowPosY = windowY;
@@ -405,29 +406,30 @@ namespace xSkillGilded {
             ImGui.Begin("xSkill Gilded", flags);
             
             drawImage(Sprite("elements", "bg"), 0, 0, windowWidth, windowHeight);
-            float contentWidth = windowWidth - tooltipWidth - contentPadding * 2;
+            float padd = _ui(contentPadding);
+            float contentWidth = windowWidth - _ui(tooltipWidth) - padd * 2;
             float deltaTime    = stopwatch.ElapsedMilliseconds / 1000f;
             stopwatch.Restart();
 
             string _hoveringID = null;
             
             #region Skill Group Tab
-                float btx = contentPadding;
-                float bty = contentPadding;
-                float bth = 32;
+                float btx = padd;
+                float bty = padd;
+                float bth = _ui(32);
                 
-                float _btsw = 96;
-                float btxc  = btx + _btsw / 2;
-                float btww  = _btsw * .5f / 2;
+                float _btsw  = _ui(96);
+                float btxc   = btx + _btsw / 2;
+                float btww   = _btsw * .5f / 2;
                 float _alpha = 1f;
-
+                
                 if(page == "_Specialize") {
-                    drawImage(Sprite("elements", "tab_sep_selected"), btxc - btww, bty + bth - 4, btww*2, 4);
+                    drawImage(Sprite("elements", "tab_sep_selected"), btxc - btww, bty + bth - 4, btww * 2, 4);
                     _alpha = 1f;
 
                 } else if (mouseHover(btx, bty, btx + _btsw, bty + bth)) {
                     _hoveringID = "_Specialize";
-                    drawImage(Sprite("elements", "tab_sep_hover"), btxc - btww, bty + bth - 4, btww*2, 4);
+                    drawImage(Sprite("elements", "tab_sep_hover"), btxc - btww, bty + bth - 4, btww * 2, 4);
                     _alpha = 1f;
                     if(ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
                         setPage("_Specialize");
@@ -435,16 +437,16 @@ namespace xSkillGilded {
                     }
 
                 } else {
-                    drawImage(Sprite("elements", "tab_sep"), btxc - btww, bty + bth - 4, btww*2, 4);
+                    drawImage(Sprite("elements", "tab_sep"), btxc - btww, bty + bth - 4, btww * 2, 4);
                     _alpha = .5f;
                 }
 
                 drawSetColor(c_white, _alpha);
-                drawImage(page == "_Specialize"? Sprite("elements", "meta_spec_selected") : Sprite("elements", "meta_spec"), btxc - 24 / 2, bty + 4, 24, 24);
+                drawImage(page == "_Specialize"? Sprite("elements", "meta_spec_selected") : Sprite("elements", "meta_spec"), btxc - _ui(24 / 2), bty + 4, _ui(24), _ui(24));
                 drawSetColor(c_white);
                 btx += _btsw;
                 
-                float btw = (windowWidth - contentPadding - btx) / skillGroups.Count;
+                float btw = (windowWidth - padd - btx) / skillGroups.Count;
                 
                 foreach(string groupName in skillGroups.Keys) {
                     btxc = btx + btw / 2;
@@ -458,12 +460,12 @@ namespace xSkillGilded {
                     }
 
                     if (groupName == page) {
-                        drawImage(Sprite("elements", "tab_sep_selected"), btxc - btww, bty + bth - 4, btww*2, 4);
+                        drawImage(Sprite("elements", "tab_sep_selected"), btxc - btww, bty + bth - 4, btww * 2, 4);
                         _fTitle = fTitleGold;
 
                     } else if (mouseHover(btx, bty, btx + btw, bty + bth)) {
                         _hoveringID = groupName;
-                        drawImage(Sprite("elements", "tab_sep_hover"), btxc - btww, bty + bth - 4, btww*2, 4);
+                        drawImage(Sprite("elements", "tab_sep_hover"), btxc - btww, bty + bth - 4, btww * 2, 4);
                         if(ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
                             setPage(groupName);
                             api.Gui.PlaySound(new AssetLocation("xskillgilded", "sounds/page.ogg"), false, .3f);
@@ -479,13 +481,13 @@ namespace xSkillGilded {
                     drawSetColor(c_white);
                 
                     if(points > 0) {
-                        float _pax = btx + btw / 2 + skillName_size.X / 2 + 20;
+                        float _pax = btx + btw / 2 + skillName_size.X / 2 + _ui(20);
                         float _pay = bty + bth / 2;
 
                         string pointsText = points.ToString();
                         Vector2 pointsText_size = fSubtitle.CalcTextSize(pointsText);
                         drawSetColor(c_lime, .3f);
-                        drawImage9patch(Sprite("elements", "glow"), _pax - 16, _pay - pointsText_size.Y / 2 - 8, pointsText_size.X + 32, pointsText_size.Y + 16, 15);
+                        drawImage9patch(Sprite("elements", "glow"), _pax - 16, _pay - pointsText_size.Y / 2 - 12, pointsText_size.X + 32, pointsText_size.Y + 24, 15);
                         drawSetColor(c_white);
                         drawTextFont(fSubtitle, pointsText, _pax, _pay, HALIGN.Left, VALIGN.Center);
                     }
@@ -495,10 +497,10 @@ namespace xSkillGilded {
             #endregion
 
             #region Skills Tab
-            float skx = contentPadding;
-            float sky = bty + bth + 4;
-            float skw = (windowWidth - contentPadding * 2) / currentSkills.Count;
-            float skh = 32;
+            float skx = padd;
+            float sky = bty + bth + _ui(4);
+            float skw = (windowWidth - padd * 2) / currentSkills.Count;
+            float skh = _ui(32);
 
             if(!metaPage) {
                 for(int i = 0; i < currentSkills.Count; i++) {
@@ -512,19 +514,19 @@ namespace xSkillGilded {
                     if(i != skillPage) {
                         if (mouseHover(skx, sky, skx + skw, sky + skh)) {
                             _hoveringID = skillName;
-                            drawImage(Sprite("elements", "tab_sep_hover"), skxc - skww, sky + skh - 4, skww*2, 4);  
+                            drawImage(Sprite("elements", "tab_sep_hover"), skxc - skww, sky + skh - 4, skww * 2, 4);  
                             if(ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
                                 setSkillPage(i);
                                 api.Gui.PlaySound(new AssetLocation("xskillgilded", "sounds/pagesub.ogg"), false, .3f);
                             }
 
                         } else {
-                            drawImage(Sprite("elements", "tab_sep"), skxc - skww, sky + skh - 4, skww*2, 4);
+                            drawImage(Sprite("elements", "tab_sep"), skxc - skww, sky + skh - 4, skww * 2, 4);
                             color.W = .5f;
                         }
                     
                     } else {
-                        drawImage(Sprite("elements", "tab_sep_selected"), skxc - skww, sky + skh - 4, skww*2, 4);
+                        drawImage(Sprite("elements", "tab_sep_selected"), skxc - skww, sky + skh - 4, skww * 2, 4);
                         _fTitle = fSubtitleGold;
                     }
                 
@@ -534,13 +536,13 @@ namespace xSkillGilded {
 
                     float points = skill.AbilityPoints;
                     if(points > 0) {
-                        float _pax = skxc + skillName_size.X / 2 + 20;
+                        float _pax = skxc + skillName_size.X / 2 + _ui(20);
                         float _pay = sky + skh / 2;
 
                         string pointsText = points.ToString();
                         Vector2 pointsText_size = fSubtitle.CalcTextSize(pointsText);
                         drawSetColor(c_lime, .3f);
-                        drawImage9patch(Sprite("elements", "glow"), _pax - 16, _pay - pointsText_size.Y / 2 - 8, pointsText_size.X + 32, pointsText_size.Y + 16, 15);
+                        drawImage9patch(Sprite("elements", "glow"), _pax - 16, _pay - pointsText_size.Y / 2 - 12, pointsText_size.X + 32, pointsText_size.Y + 24, 15);
                         drawSetColor(c_white);
                         drawTextFont(fSubtitle, pointsText, _pax, _pay, HALIGN.Left, VALIGN.Center);
                     }
@@ -551,15 +553,15 @@ namespace xSkillGilded {
             #endregion
 
             #region Ability
-            float abx = contentPadding;
-            float aby = sky + skh + 8;
-            float abw = contentWidth - abx - 8;
-            float abh = windowHeight - aby - 8;
-            float bw  = buttonWidth;
-            float bh  = buttonHeight;
+            float abx = padd;
+            float aby = sky + skh + _ui(8);
+            float abw = contentWidth - abx - _ui(8);
+            float abh = windowHeight - aby - _ui(8);
+            float bw  = _ui(buttonWidth);
+            float bh  = _ui(buttonHeight);
 
-            float padX = Math.Max(0, abiliyPageWidth - abw  + 128);
-            float padY = Math.Max(0, abiliyPageHeight - abh + 128);
+            float padX = Math.Max(0, _ui(abiliyPageWidth) - abw  + _ui(128));
+            float padY = Math.Max(0, _ui(abiliyPageHeight) - abh + _ui(128));
             
             float mx = ImGui.GetMousePos().X;
             float my = ImGui.GetMousePos().Y;
@@ -577,12 +579,12 @@ namespace xSkillGilded {
                 float offx = ofmx + abw / 2;
                 float offy = ofmy + abh / 2;
                 AbilityButton _hoveringButton = null;
-
-                float lvx = 64;
-
+                
+                float lvx = _ui(64);
+                
                 for(int i = 1; i < levelRequirementBars.Count; i++) {
                     float lv = levelRequirementBars[i];
-                    float _y = offy + abiliyPageHeight / 2 - i * (buttonHeight + buttonPad) + buttonPad / 2;
+                    float _y = offy + _ui(abiliyPageHeight / 2 - i * (buttonHeight + buttonPad) + buttonPad / 2);
 
                     if (mouseHover(lvx, _y - buttonHeight - buttonPad, lvx + abw, _y))
                         drawSetColor(new(239/255f, 183/255f, 117/255f, 1));
@@ -590,8 +592,8 @@ namespace xSkillGilded {
                         drawSetColor(new(104/255f, 76/255f, 60/255f, 1));
 
                     string lvReqText = $"Level {lv}";
-                    drawImage(Sprite("elements", "level_sep"), lvx, _y - 64, abw - 128, 64);
-                    drawTextFont(fSubtitle, lvReqText, lvx + 32, _y - 2, HALIGN.Left, VALIGN.Bottom);
+                    drawImage(Sprite("elements", "level_sep"), lvx, _y - _ui(64), abw - _ui(128), _ui(64));
+                    drawTextFont(fSubtitle, lvReqText, lvx + _ui(32), _y - _ui(2), HALIGN.Left, VALIGN.Bottom);
                 }
                 drawSetColor(c_white);
 
@@ -599,17 +601,17 @@ namespace xSkillGilded {
                     drawSetColor(line.color);
                     
                     if(line.y0 == line.y1) {
-                        float _x0 = offx + Math.Min(line.x0, line.x1) + bw;
-                        float _x1 = offx + Math.Max(line.x0, line.x1);
-
-                        drawImage(Sprite("elements", "pixel"), _x0, offy + line.y0 + bh / 2 - 10, _x1 - _x0, 20);
+                        float _x0 = offx + _ui(Math.Min(line.x0, line.x1)) + bw;
+                        float _x1 = offx + _ui(Math.Max(line.x0, line.x1));
+                        
+                        drawImage(Sprite("elements", "pixel"), _x0, offy + _ui(line.y0 + bh / 2 - 10), _x1 - _x0, _ui(20));
                     }
                 }
                 drawSetColor(c_white);
             
                 foreach (AbilityButton button in abilityButtons.Values) {
-                    float bx = button.x + offx;
-                    float by = button.y + offy;
+                    float bx = _ui(button.x) + offx;
+                    float by = _ui(button.y) + offy;
                     string buttonSpr = "abilitybox_frame_inactive";
                     Vector4 color = c_grey;
                 
@@ -656,7 +658,7 @@ namespace xSkillGilded {
                     }
 
                     if(button.glowAlpha > 0) {
-                        float glow_size = 256;
+                        float glow_size = _ui(256);
                         drawSetColor(tier == ability.Ability.MaxTier? c_gold : c_lime, button.glowAlpha);
                         drawImage(Sprite("elements", "ability_glow"), bx + bw / 2 - glow_size / 2, by + bh / 2 - glow_size / 2, glow_size, glow_size);
                         drawSetColor(c_white);
@@ -672,22 +674,22 @@ namespace xSkillGilded {
                     drawImage9patch(Sprite("elements", "ability_shadow"), bx, by, bw, bh, 30);
                     
                     Vector2 _nameSize = fSubtitle.CalcTextSize(abilityName);
-                    float   bgh = _nameSize.X > bw - 8? bh : 48;
+                    float   bgh = _nameSize.X > bw - _ui(8)? bh : _ui(48);
                     drawImage(Sprite("elements", "abilitybox_name_under"), bx, by + bh - bgh, bw, bgh);
                     drawSetColor(color);
-                    if(_nameSize.X > bw - 8)
-                        drawTextFontWrap(fSubtitle, abilityName, bx + bw / 2, by + bh - 12, HALIGN.Center, VALIGN.Bottom, bw - 8);
+                    if(_nameSize.X > bw - _ui(8))
+                        drawTextFontWrap(fSubtitle, abilityName, bx + bw / 2, by + bh - _ui(12), HALIGN.Center, VALIGN.Bottom, bw - _ui(8));
                     else 
-                        drawTextFont(fSubtitle, abilityName, bx + bw / 2, by + bh - 12, HALIGN.Center, VALIGN.Bottom);
+                        drawTextFont(fSubtitle, abilityName, bx + bw / 2, by + bh - _ui(12), HALIGN.Center, VALIGN.Bottom);
                     drawSetColor(c_white);
 
                     float progress = ability.Tier / (float)ability.Ability.MaxTier;
-                    float prh = 6;
+                    float prh = _ui(6);
                     float prw = bw / (float)ability.Ability.MaxTier;
                     float prx = bx;
-                    float pry = by + bh - 2 - prh;
+                    float pry = by + bh - _ui(2) - prh;
 
-                    for(int i=0; i < ability.Ability.MaxTier; i++)
+                    for(int i = 0; i < ability.Ability.MaxTier; i++)
                         drawImage9patch(Sprite("elements", "abilitybox_progerss_bg"), prx + i * prw, pry, prw, prh, 2);
                     
                     float tierWidth = ability.Tier * prw;
@@ -695,7 +697,7 @@ namespace xSkillGilded {
                     if(button.drawTierWidth > 0) 
                         drawImage9patch(Sprite("elements", "abilitybox_progerss_content"), prx, pry, button.drawTierWidth, prh, 2);
                     
-                    for(int i=0; i < ability.Ability.MaxTier - 1; i++)
+                    for(int i = 0; i < ability.Ability.MaxTier - 1; i++)
                         drawImage9patch(Sprite("elements", "abilitybox_progerss_overlay"), prx + i * prw, pry, prw + 1, prh, 2);
                     
                     drawImage9patch(Sprite("elements", buttonSpr), bx, by, bw, bh, 15);
@@ -706,8 +708,8 @@ namespace xSkillGilded {
                 hoveringButton = _hoveringButton;
                 if(hoveringButton != null) {
                     PlayerAbility ability = hoveringButton.Ability;
-                    float bx  = hoveringButton.x + offx;
-                    float by  = hoveringButton.y + offy;
+                    float bx  = _ui(hoveringButton.x) + offx;
+                    float by  = _ui(hoveringButton.y) + offy;
                     Vector4 c = hoveringButton.drawColor;
 
                     drawSetColor(new(c.X, c.Y, c.Z, .5f));
@@ -726,14 +728,14 @@ namespace xSkillGilded {
             #endregion
 
             #region Skills Description
-            float sdx = contentPadding + 16;
-            float sdy = sky + skh + 16;
-            float sdw = 200;
+            float sdx = padd + _ui(16);
+            float sdy = sky + skh + _ui(16);
+            float sdw = _ui(200);
 
             if(page == "_Specialize") {
-                string skillTitle = Lang.GetUnformatted("xskillgilded:specialization");
+                string skillTitle = Lang.GetUnformatted("xlib:specialisations");
                 Vector2 skillTitle_size = drawTextFont(fTitleGold, skillTitle, sdx, sdy);
-                sdy += fTitleGold.lineHeight + 8;
+                sdy += fTitleGold.getLineHeight() + _ui(8);
 
                 foreach(PlayerSkill skill in allSkills) {
                     float hh = drawSkillLevelDetail(skill, sdx, sdy, sdw, false);
@@ -749,23 +751,23 @@ namespace xSkillGilded {
                 float unlearnPointReq = xLevelingClient.GetPointsForUnlearn();
                 float unlearnAmount   = (float)Math.Floor(unlearnPoint / unlearnPointReq);
                 float unlearnProgress = unlearnPoint / unlearnPointReq - unlearnAmount;
-                float unx = sdx + sdw - 8;
+                float unx = sdx + sdw - _ui(8);
                 float uny = sdy;
                 
                 drawSetColor(c_red);
-                drawTextFont(fSubtitle, Lang.GetUnformatted("xskillgilded:unlearnPoints"), sdx, sdy);
+                drawTextFont(fSubtitle, Lang.GetUnformatted("xlib:unlearnpoints"), sdx, sdy);
 
                 if(unlearnAmount > 0) {
                     Vector2 unlearnPoint_size = fSubtitle.CalcTextSize(unlearnAmount.ToString());
                     drawSetColor(c_red, .3f);
-                    drawImage9patch(Sprite("elements", "glow"), unx - unlearnPoint_size.X - 16, sdy - 8, unlearnPoint_size.X + 32, unlearnPoint_size.Y + 16, 15);
+                    drawImage9patch(Sprite("elements", "glow"), unx - unlearnPoint_size.X - 16, sdy - 12, unlearnPoint_size.X + 32, unlearnPoint_size.Y + 24, 15);
                     drawSetColor(c_white);
                 }
                 drawTextFont(fSubtitle, unlearnAmount.ToString(), unx, sdy, HALIGN.Right);
                 
-                sdy += fSubtitle.lineHeight;
-                drawProgressBar(unlearnProgress, sdx, sdy, sdw, 4, c_dkgrey, c_red);
-                sdy += 4;
+                sdy += fSubtitle.getLineHeight();
+                drawProgressBar(unlearnProgress, sdx, sdy, sdw, _ui(4), c_dkgrey, c_red);
+                sdy += _ui(4);
                 
                 float unlearnCooldown    = currentPlayerSkill.PlayerSkillSet.UnlearnCooldown;
                 float unlearnCooldownMax = xLevelingClient.Config.unlearnCooldown;
@@ -784,18 +786,18 @@ namespace xSkillGilded {
             #endregion
 
             #region Skills actions
-                float actx = contentPadding + 8;
-                float acty = windowHeight - contentPadding - 8;
+                float actx = padd + _ui(8);
+                float acty = windowHeight - padd - _ui(8);
 
-                float actbw = 96;
-                float actbh = 96;
+                float actbw = _ui(96);
+                float actbh = _ui(96);
                 float actbx = actx;
                 float actby = acty - actbh;
-                float actLh = 24;
+                float actLh = _ui(24);
                 bool isSparing = xLevelingClient.LocalPlayerSkillSet.Sparring;
 
                 drawSetColor(new Vector4(1,1,1,isSparing? 1 : .5f));
-                drawImage(Sprite("elements", isSparing? "sparring_enabled" : "sparring_disabled"), actbx + actbw / 2 - 96 / 2, actby + actbh - 96, 96, 96);
+                drawImage(Sprite("elements", isSparing? "sparring_enabled" : "sparring_disabled"), actbx + actbw / 2 - _ui(96) / 2, actby + actbh - _ui(96), _ui(96), _ui(96));
                 drawSetColor(c_white);
                 
                 drawImage9patch(Sprite("elements", "button_idle"), actbx, actby + actbh - actLh, actbw, actLh, 2);
@@ -811,25 +813,27 @@ namespace xSkillGilded {
                         drawImage9patch(Sprite("elements", "button_pressing"), actbx, actby + actbh - actLh, actbw, actLh, 2);
                     }
                     
-                    hoveringTooltip = new(Lang.GetUnformatted("xskillgilded:sparringTitle"), Lang.GetUnformatted("xskillgilded:sparringDesc"));
+                    hoveringTooltip = new(Lang.GetUnformatted("xlib:sparringmode"), Lang.GetUnformatted("xlib:sparring-desc"));
                 } 
 
-                drawTextFont(fSubtitle, "Spar", actbx + actbw / 2, actby + actbh - 4, HALIGN.Center, VALIGN.Bottom);
+                drawTextFont(fSubtitle, "Spar", actbx + actbw / 2, actby + actbh - _ui(4), HALIGN.Center, VALIGN.Bottom);
             #endregion
 
             #region Tooltip
-                float tooltipX = windowWidth - tooltipWidth - contentPadding;
-                float tooltipY = sky + skh + 32;
-                float tooltipW = tooltipWidth - contentPadding;
-                float tooltipH = windowHeight - tooltipY - contentPadding;
+                float tooltipX = windowWidth - tooltipWidth - padd;
+                float tooltipY = sky + skh + _ui(32);
+                float tooltipW = tooltipWidth - padd;
+                float tooltipH = windowHeight - tooltipY - padd;
                 
-                drawImage(Sprite("elements", "tooltip_sep_v"), tooltipX - 16, tooltipY, 2, tooltipH);
+                drawImage(Sprite("elements", "tooltip_sep_v"), tooltipX - _ui(16), tooltipY, 2, tooltipH);
                 
                 if(hoveringTooltip != null) {
-                    drawTextFont(fTitleGold, hoveringTooltip.Title, tooltipX + 8, tooltipY);
-                    tooltipY += fTitleGold.lineHeight + 2;
-                    drawProgressBar(0, tooltipX, tooltipY, tooltipW, 4, c_dkgrey, c_lime);
-                    tooltipY += 12;
+                    tooltipY += fTitleGold.getLineHeight();
+                    drawTextFont(fTitleGold, hoveringTooltip.Title, tooltipX + _ui(8), tooltipY, HALIGN.Left, VALIGN.Bottom);
+                    
+                    tooltipY += _ui(2);
+                    drawProgressBar(0, tooltipX, tooltipY, tooltipW, _ui(4), c_dkgrey, c_lime);
+                    tooltipY += _ui(12);
                     
                     // float h = drawTextWrap(hoveringTooltip.Description, tooltipX + 8, tooltipY, HALIGN.Left, VALIGN.Top, tooltipW - 16);
                     if(currentTooltip != hoveringTooltip.Description) {
@@ -837,7 +841,7 @@ namespace xSkillGilded {
                         currentTooltip = hoveringTooltip.Description; 
                     }
 
-                    float h = drawTextVTML(tooltipVTML, tooltipX + 8, tooltipY, tooltipW - 16);
+                    float h = drawTextVTML(tooltipVTML, tooltipX + _ui(8), tooltipY, tooltipW - _ui(16));
 
                 } else if(_hoveringButton != null) {
                     PlayerAbility ability = _hoveringButton.Ability;
@@ -848,13 +852,13 @@ namespace xSkillGilded {
                     int    tierMax   = ability.Ability.MaxTier;
                     string tierText  = "Lv. " + tier + "/" + tierMax;
                     
-                    tooltipY += fTitleGold.lineHeight;
-                    drawTextFont(fTitleGold, name, tooltipX + 8, tooltipY, HALIGN.Left, VALIGN.Bottom);
-                    drawTextFont(fSubtitle, tierText, tooltipX + tooltipW - 8, tooltipY, HALIGN.Right, VALIGN.Bottom);
+                    tooltipY += fTitleGold.getLineHeight();
+                    drawTextFont(fTitleGold, name, tooltipX + _ui(8), tooltipY, HALIGN.Left, VALIGN.Bottom);
+                    drawTextFont(fSubtitle, tierText, tooltipX + tooltipW - _ui(8), tooltipY, HALIGN.Right, VALIGN.Bottom);
 
-                    tooltipY += 2;
-                    drawProgressBar((float)tier / tierMax, tooltipX, tooltipY, tooltipW, 4, c_dkgrey, tier == tierMax? c_gold : c_lime);
-                    tooltipY += 12;
+                    tooltipY += _ui(2);
+                    drawProgressBar((float)tier / tierMax, tooltipX, tooltipY, tooltipW, _ui(4), c_dkgrey, tier == tierMax? c_gold : c_lime);
+                    tooltipY += _ui(12);
 
                     string descCurrTier = formatAbilityDescription(ability.Ability, tier);
                     // float h = drawTextWrap(descCurrTier, tooltipX + 8, tooltipY, HALIGN.Left, VALIGN.Top, tooltipW - 16);
@@ -863,22 +867,22 @@ namespace xSkillGilded {
                         currentTooltip = descCurrTier; 
                     }
 
-                    float h = drawTextVTML(tooltipVTML, tooltipX + 8, tooltipY, tooltipW - 16);
-                    tooltipY += Math.Max(h + 16, 160);
+                    float h = drawTextVTML(tooltipVTML, tooltipX + _ui(8), tooltipY, tooltipW - _ui(16));
+                    tooltipY += Math.Max(h + _ui(16), _ui(160));
 
                     drawSetColor(new(104/255f, 76/255f, 60/255f, 1));
-                    drawImage(Sprite("elements", "tooltip_sep"), tooltipX + 8, tooltipY, tooltipW - 16, 1);
+                    drawImage(Sprite("elements", "tooltip_sep"), tooltipX + _ui(8), tooltipY, tooltipW - _ui(16), 1);
                     drawSetColor(c_white);
-                    tooltipY += 16;
+                    tooltipY += _ui(16);
 
                     if (tier < tierMax) {
                         int requiredLevel = ability.Ability.RequiredLevel(tier + 1);
                         string reqText    = string.Format(Lang.GetUnformatted("xskillgilded:abilityLevelRequired"), skillName, requiredLevel);
 
                         drawSetColor(currentPlayerSkill.Level >= requiredLevel? c_lime : c_red);
-                        drawTextFont(fSubtitle, reqText, tooltipX + 8, tooltipY);
+                        drawTextFont(fSubtitle, reqText, tooltipX + _ui(8), tooltipY);
                         drawSetColor(c_white);
-                        tooltipY += ImGui.GetTextLineHeight() + 4;
+                        tooltipY += fSubtitle.getLineHeight() + _ui(4);
 
                         List<Requirement> requirements = ability.Ability.Requirements;
                         foreach (Requirement req in requirements) {
@@ -897,27 +901,27 @@ namespace xSkillGilded {
                         
                             foreach (string reqLine in reqLines) {
                                 if (reqLine.Length == 0) continue;
-                                drawTextFont(fSubtitle, reqLine, tooltipX + 8, tooltipY);
-                                tooltipY += ImGui.GetTextLineHeight() + 2;
+                                drawTextFont(fSubtitle, reqLine, tooltipX + _ui(8), tooltipY);
+                                tooltipY += fSubtitle.getLineHeight() + _ui(2);
                             }
 
                             drawSetColor(c_white);
 
-                            tooltipY += 4;
+                            tooltipY += _ui(4);
                         }
                     }
 
-                    float actX = windowWidth  - contentPadding - 16;
-                    float actY = windowHeight - contentPadding -  8;
+                    float actX = windowWidth  - padd - _ui(16);
+                    float actY = windowHeight - padd - _ui( 8);
                     
                     drawSetColor(c_grey);
                     Vector2 _mouseRsize = drawTextFont(fSubtitle, Lang.GetUnformatted("xskillgilded:actionUnlearn"), actX, actY, HALIGN.Right, VALIGN.Bottom);    
-                    drawImage(Sprite("elements", "mouse_right"), actX - _mouseRsize.X / 2 - 64 / 2, actY - 32 - 16, 64, 32);
-                    actX -= _mouseRsize.X + 16;
+                    drawImage(Sprite("elements", "mouse_right"), actX - _mouseRsize.X / 2 - _ui(64 / 2), actY - _ui(32 + 16), _ui(64), _ui(32));
+                    actX -= _mouseRsize.X + _ui(16);
                     
                     Vector2 _mouseLsize = drawTextFont(fSubtitle, Lang.GetUnformatted("xskillgilded:actionLearn"), actX, actY, HALIGN.Right, VALIGN.Bottom);
-                    drawImage(Sprite("elements", "mouse_left"),  actX - _mouseLsize.X / 2 - 64 / 2, actY - 32 - 16, 64, 32);
-                    actX -= _mouseLsize.X + 16;
+                    drawImage(Sprite("elements", "mouse_left"),  actX - _mouseLsize.X / 2 - _ui(64 / 2), actY - _ui(32 + 16), _ui(64), _ui(32));
+                    actX -= _mouseLsize.X + _ui(16);
                     drawSetColor(c_white);
                 }
                 
@@ -1007,7 +1011,7 @@ namespace xSkillGilded {
                 float unlearnAmount   = (float)Math.Floor(unlearnPoint / unlearnPointReq);
                 string unlearnPointTitle = unlearnAmount.ToString();
 
-                float _sx = x + w - 8;
+                float _sx = x + w - _ui(8);
                 Vector2 _s;
 
                 drawSetColor(c_red);
@@ -1023,7 +1027,7 @@ namespace xSkillGilded {
                 drawSetColor(c_white);
             }
 
-            y += skillTitle_size.Y + (title? 4 : 0);
+            y += skillTitle_size.Y + _ui(title? 4 : 0);
 
             string skillLvTitle = "Lv." + skill.Level;
             Vector2 skillLvTitle_size = drawTextFont(fSubtitle, skillLvTitle, x, y);
@@ -1033,7 +1037,7 @@ namespace xSkillGilded {
             float xpProgress = currXp / nextXp;
 
             drawSetColor(c_grey);
-            drawTextFont(fSubtitle, $"{currXp}/{nextXp} xp", x + w - 8, y, HALIGN.Right);
+            drawTextFont(fSubtitle, $"{currXp}/{nextXp} xp", x + w - _ui(8), y, HALIGN.Right);
             drawSetColor(c_white);
 
             float expBonus = skill.Skill.GetExperienceMultiplier(skill.PlayerSkillSet, false) - 1f;
@@ -1056,8 +1060,8 @@ namespace xSkillGilded {
             }
             
             y += skillLvTitle_size.Y;
-            drawProgressBar(xpProgress, x, y, w, 4, c_dkgrey, c_lime);
-            y += 6;
+            drawProgressBar(xpProgress, x, y, w, _ui(4), c_dkgrey, c_lime);
+            y += _ui(6);
             
             if(title) {
                 int abilityPoint = skill.AbilityPoints;
@@ -1065,14 +1069,14 @@ namespace xSkillGilded {
                 if(abilityPoint > 0) {
                     Vector2 skillPoint_size = fSubtitle.CalcTextSize(abilityPoint.ToString());
                     drawSetColor(c_lime, .3f);
-                    drawImage9patch(Sprite("elements", "glow"), x - 16, y - 8, skillPoint_size.X + 32, skillPoint_size.Y + 16, 15);
+                    drawImage9patch(Sprite("elements", "glow"), x - 16, y - 12, skillPoint_size.X + 32, skillPoint_size.Y + 24, 15);
                     drawSetColor(c_white);
                 }
                 drawTextFont(fSubtitle, skillPointTitle, x, y);
-                y += fSubtitle.lineHeight;
+                y += fSubtitle.getLineHeight();
             }
             
-            y += 8;
+            y += _ui(8);
             return y - ys;
         }
 
@@ -1080,10 +1084,10 @@ namespace xSkillGilded {
             PlayerAbility ability = button.Ability;
             bool isFulfilled = requirement.IsFulfilled(ability, ability.Tier + 1);
             
-            float bx  = button.x + offx;
-            float by  = button.y + offy;
-            float bw  = buttonWidth;
-            float bh  = buttonHeight;
+            float bx  = _ui(button.x) + offx;
+            float by  = _ui(button.y) + offy;
+            float bw  = _ui(buttonWidth);
+            float bh  = _ui(buttonHeight);
                         
             AbilityRequirement abilityRequirement = requirement as AbilityRequirement;
             if(abilityRequirement != null) {
@@ -1091,8 +1095,8 @@ namespace xSkillGilded {
                 if(abilityButtons.ContainsKey(name)) {
                     AbilityButton _button = abilityButtons[name];
 
-                    float _bx  = _button.x + offx;
-                    float _by  = _button.y + offy;
+                    float _bx  = _ui(_button.x) + offx;
+                    float _by  = _ui(_button.y) + offy;
                     Vector4 _c = isFulfilled? new(c_lime.X, c_lime.Y, c_lime.Z, .5f) : new(c_red.X, c_red.Y, c_red.Z, .9f);
                                 
                     drawSetColor(_c);
@@ -1119,8 +1123,8 @@ namespace xSkillGilded {
                 if(abilityButtons.ContainsKey(name)) {
                     AbilityButton _button = abilityButtons[name];
 
-                    float _bx  = _button.x + offx;
-                    float _by  = _button.y + offy;
+                    float _bx  = _ui(_button.x) + offx;
+                    float _by  = _ui(_button.y) + offy;
 
                     drawSetColor(new(c_red.X, c_red.Y, c_red.Z, .9f));
                     drawImage9patch(Sprite("elements", "abilitybox_frame_selected"), _bx - 16, _by - 16, bw + 32, bh + 32, 30);
@@ -1158,7 +1162,13 @@ namespace xSkillGilded {
         }
 
         private void Open() {
-            if(!isReady || isOpen) return;
+            if(isOpen) return;
+
+            if(!isReady) {
+                onCheckAPI(0);
+                if(!isReady) return;
+            }
+
             isOpen = true;
             imguiModSystem.Show();
             api.Gui.PlaySound(new AssetLocation("xskillgilded", "sounds/open.ogg"), false, .3f);
