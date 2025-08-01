@@ -20,24 +20,12 @@ namespace xSkillGilded {
         public static ICoreClientAPI api = null;
         public static void setApi(ICoreClientAPI _api) { api = _api; }
 
-        public static Dictionary<string, LoadedTexture> textureDict = new();
-
         public static LoadedTexture Sprite(string name) {
-            if(textureDict.ContainsKey(name)) return textureDict[name];
-
-            LoadedTexture tex = getTextureFromFile(name);
-            textureDict[name] = tex;
-
-            return tex;
-        }
-
-        public static LoadedTexture getTextureFromFile(string fileName) {
             LoadedTexture tex = new(api);
-
-            api.Render.GetOrLoadTexture(fileName, ref tex);
+            api.Render.GetOrLoadTexture(name, ref tex);
             return tex;
         }
-        
+
         public static ImFontPtr loadFont(string path) {
             string _fpath = Path.Combine(GamePaths.AssetsPath, "xskillgilded", "fonts", "scarab.ttf");
             ImGuiIOPtr io = ImGui.GetIO();

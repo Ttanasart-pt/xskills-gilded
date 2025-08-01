@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
@@ -32,9 +33,16 @@ namespace xSkillGilded {
         public static Vector4 drawCurrentColor = Vector4.One;
 
         public static bool useInternalTextDrawer = false;
+        
+        public static Vector4 c_white  = new(1);
+        public static Vector4 c_dkgrey = hexToVec4("392a1c");
+        public static Vector4 c_grey   = hexToVec4("92806a");
+        public static Vector4 c_lime   = hexToVec4("7ac62f");
+        public static Vector4 c_red    = hexToVec4("bf663f");
+        public static Vector4 c_gold   = hexToVec4("feae34");
 
-        public static void drawSetColor(Vector4 c, float alpha = 0) { 
-            if(alpha > 0) c = new(c.X, c.Y, c.Z, alpha);
+        public static void drawSetColor(Vector4 c, float alpha = -1f) { 
+            if(alpha > -1) c = new(c.X, c.Y, c.Z, alpha);
             drawCurrentColor = c; 
         }
 
@@ -379,7 +387,17 @@ namespace xSkillGilded {
         #endregion
 
         #region Utils
+        public static LoadedTexture Sprite(string cat, string name) {
+            return resourceLoader.Sprite($"xskillgilded:textures/gui/skilltree/{cat}/{name}.png"); 
+        }
+
         public static float _ui(float v) { return v / baseUiScale * uiScale; }
+
+        public static float lerpLinearTo(float a, float b, float t, float dt) {
+            if(Math.Abs(a - b) <= t * dt) return b;
+
+            return a + Math.Sign(b - a) * t * dt;
+        }
 
         public static float lerpTo(float a, float b, float t, float dt) {
             if(Math.Abs(a - b) < 0.01f) return b;
@@ -418,6 +436,10 @@ namespace xSkillGilded {
 
             if(h > 0) return $"{h:D2}:{m:D2}:{s:D2}";
             return $"{m:D2}:{s:D2}";
+        }
+        
+        public static bool pointInRectangle(float px, float py, float x0, float y0, float x1, float y1) {
+            return px >= x0 && py >= y0 && px <= x1 && py <= y1;
         }
         #endregion
     }

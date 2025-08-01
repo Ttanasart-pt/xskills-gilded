@@ -1,54 +1,111 @@
-﻿using System;
+﻿using Cairo;
+using ImGuiNET;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
-using Cairo;
+using Vintagestory.Client.NoObf;
+using VSImGui;
+using VSImGui.API;
+using XLib.XEffects;
+using XLib.XLeveling;
 using static xSkillGilded.ImGuiUtil;
 
 namespace xSkillGilded {
 
-    public class levelPopup : IRenderer {
+    public class LevelPopup {
         ICoreClientAPI api;
-
-        int TextureId;
-        int width = 160;
-        int height = 64;
-
-        public levelPopup(ICoreClientAPI api) {
-            this.api = api;
-
-            ImageSurface surface = new ImageSurface(Format.Rgb24, width, height);
-            Context cr = new(surface);
-
-            cr.LineWidth = 0.1;
-            cr.SetSourceColor(new Color(0, 0, 0));
-            cr.Rectangle(0.25, 0.25, 0.5, 0.5);
-            cr.Stroke();
-
-            LoadedTexture tex = new(api);
-
-            TextureId = resourceLoader.Sprite("meta_spec_selected").TextureId;
-        }
-
-        public double RenderOrder => 1;
-        public int RenderRange => 0;
-
-        public void OnRenderFrame(float deltaTime, EnumRenderStage stage) {
-            
-            ElementBounds window = api.Gui.WindowBounds;
-            float windowWidth  = (float)window.OuterWidth;
-            float windowHeight = (float)window.OuterHeight;
-
-            api.Render.RenderTexture(TextureId, windowWidth / 2 - width / 2, windowHeight / 2 - height / 2, width, height);
-        }
+        private ImGuiModSystem imguiModSystem;
+        PlayerSkill skill;
         
-        public void Dispose() {
-            api.Event.UnregisterRenderer(this, EnumRenderStage.Ortho);
+        float timer  = 0;
+        bool showing = true;
+        
+        float windowWidth  = _ui(560);
+        float windowHeight = _ui(160);
 
+        public LevelPopup(ICoreClientAPI api, PlayerSkill skill) {
+            this.api = api;
+            this.skill = skill;
+
+            imguiModSystem = api.ModLoader.GetModSystem<ImGuiModSystem>();
+            imguiModSystem.Draw += Draw;
+            imguiModSystem.Closed += Close;
         }
+
+        public CallbackGUIStatus Draw(float deltaSecnds) {
+            if(!showing) return CallbackGUIStatus.DontGrabMouse;
+
+            ElementBounds window = api.Gui.WindowBounds;
+            float screenWidth  = (float)window.OuterWidth;
+            float screenHeight = (float)window.OuterHeight;
+            
+            float wx = screenWidth / 2 - windowWidth / 2;
+            float wy = _ui(8);
+
+            ImGui.SetNextWindowSize(new (windowWidth, windowHeight));
+            ImGui.SetNextWindowPos(new (wx, wy));
+            ImGuiWindowFlags flags = ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar
+                 | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs;
+
+            ImGui.Begin("effectBox", flags);
+            drawSetColor(c_dkgrey, invLerp2(timer, 0f, 1f, 3.5f, 4f));
+            drawImage(Sprite("elements", "level_up_glow"), 0, 0, windowWidth, windowHeight);
+            drawSetColor(c_white, invLerp2(timer, 0f, .5f, 3.5f, 4f));
+            float ww = invLerp(timer, 0f, .75f) * (windowWidth - _ui(80));
+            drawImage(Sprite("elements", "level_sep"), windowWidth / 2 - ww / 2, windowHeight / 2 - _ui(64), ww, _ui(64));
+            drawSetColor(c_white);
+
+            LoadedTexture skillIcon = Sprite("skillicon", skill.Skill.Name);
+            if(skillIcon.TextureId != 0) {
+                drawSetColor(c_dkgrey, invLerp2(timer, 0f, 1f, 3.5f, 4f));
+                drawImage(Sprite("elements", "level_up_glow"), windowWidth / 2 -_ui(40), windowHeight / 2 - _ui(40), _ui(80), _ui(80));
+                drawSetColor(c_gold, invLerp2(timer, 0f, 1f, 3.5f, 4f));
+                drawImage(skillIcon, windowWidth / 2 -_ui(16), windowHeight / 2 - _ui(16), _ui(32), _ui(32));
+                drawSetColor(c_white);
+            }
+
+            string lvUpText = $"{skill.Skill.DisplayName} Level up";
+            drawSetColor(c_white, invLerp2(timer, 0f, .3f, 3.5f, 4f));
+            Vector2 lvUpText_s = drawTextFont(fTitleGold, lvUpText, windowWidth / 2, windowHeight / 2 - _ui(16), HALIGN.Center, VALIGN.Bottom);
+            drawSetColor(c_white);
+
+            var hk = api.Input.GetHotKeyByCode("xSkillGilded");
+            string hotkeyText = $"Press {hk.CurrentMapping.ToString()} to open skill tree.";
+            drawSetColor(c_white, invLerp2(timer, .3f, .6f, 3.5f, 4f) * .8f);
+            Vector2 hotkeyText_s = drawTextFont(fSubtitle, hotkeyText, windowWidth / 2, windowHeight / 2 + _ui(16), HALIGN.Center, VALIGN.Top);
+            drawSetColor(c_white);
+
+            ImGui.End();
+            
+            timer += deltaSecnds;
+            if(timer >= 4f) showing = false; // imguiModSystem.Draw -= Draw;
+            
+            return CallbackGUIStatus.DontGrabMouse;
+        }
+
+        float smoothstep(float t) {
+            return t * t * (3f - 2f * t);
+        }
+
+        float invLerp(float time, float from, float to) {
+            float a = Math.Clamp((time - from) / (to - from), 0f, 1f);
+            return smoothstep(a);
+        }
+
+        float invLerp2(float time, float from0, float to0, float from1, float to1) {
+            float a = Math.Min(Math.Clamp((time - from0) / (to0 - from0), 0f, 1f),
+                          1f - Math.Clamp((time - from1) / (to1 - from1), 0f, 1f));
+            return smoothstep(a);
+        }
+
+        private void Close() { }
 
     }
 }

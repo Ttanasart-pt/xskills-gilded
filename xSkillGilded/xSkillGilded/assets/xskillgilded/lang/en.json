@@ -15,4 +15,11 @@
     "actionLearn": "Learn",
     "actionUnlearn": "Unlearn",
 
+    "lvPopupEnabled": "Enable Levelup popup",
+    "effectBoxEnabled": "Enable Effect box", 
+    "effectBoxOriginX": "Effect box origin X",
+    "effectBoxOriginY": "Effect box origin Y",
+    "effectBoxSize": "Effect box size",
+    "effectBoxOrientation": "Effect box orientation",
+
 }

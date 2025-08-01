@@ -70,4 +70,8 @@
   <PackageReference Include="VSImGui_DebugTools" Version="0.0.6" />
 </ItemGroup>
 
+<ItemGroup>
+  <Folder Include="assets\xskillgilded\config\" />
+</ItemGroup>
+
 </Project>

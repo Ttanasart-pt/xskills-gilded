@@ -1,14 +1,10 @@
 ﻿using ImGuiNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -24,6 +20,9 @@ using static xSkillGilded.ImGuiUtil;
 
 namespace xSkillGilded {
     public class xSkillGraphicalUI : ModSystem {
+        public static ModConfig config;
+        public const string configFileName = "xskillsgilded.json";
+
         private ICoreClientAPI api;
         private ImGuiModSystem imguiModSystem;
 
@@ -39,8 +38,9 @@ namespace xSkillGilded {
 
         Dictionary<PlayerSkill, int> previousLevels;
         
-        const int checkAPIInterval = 1000;
-        private long checkAPIID;
+        const int checkAPIInterval   = 1000;
+        const int checkLevelInterval = 100;
+        private long checkAPIID, checkLevelID;
         bool isReady = false;
 
         bool metaPage = false;
@@ -73,18 +73,27 @@ namespace xSkillGilded {
         TooltipObject hoveringTooltip = null;
         string hoveringID = null;
 
-        Vector4 c_white  = new(1);
-        Vector4 c_dkgrey = hexToVec4("392a1c");
-        Vector4 c_grey   = hexToVec4("92806a");
-        Vector4 c_lime   = hexToVec4("7ac62f");
-        Vector4 c_red    = hexToVec4("bf663f");
-        Vector4 c_gold   = hexToVec4("feae34");
-        
+        EffectBox effectBox;
+
         public override bool ShouldLoad(EnumAppSide forSide) { return forSide == EnumAppSide.Client; }
         public override double ExecuteOrder() { return 1; }
         
         public override void StartClientSide(ICoreClientAPI api) {
             this.api = api;
+            resourceLoader.setApi(api);
+
+            try {
+                config = api.LoadModConfig<ModConfig>(configFileName);
+                if (config == null)
+                    config = new ModConfig();
+
+                api.StoreModConfig<ModConfig>(config, configFileName);
+
+            } catch (Exception e) {
+                config = new ModConfig();
+            }
+
+            //api.Logger.Debug("CONFIG: " + config.ToString());
 
             api.Input.RegisterHotKey("xSkillGilded", "Show/Hide Skill Dialog - Gilded", GlKeys.O, HotkeyType.GUIOrOtherControls);
             api.Input.SetHotKeyHandler("xSkillGilded", Toggle);
@@ -92,8 +101,6 @@ namespace xSkillGilded {
             imguiModSystem = api.ModLoader.GetModSystem<ImGuiModSystem>();
             imguiModSystem.Draw   += Draw;
             imguiModSystem.Closed += Close;
-
-            resourceLoader.setApi(api);
 
             fTitle        = new Font().LoadedTexture(api, Sprite("fonts", "scarab"), FontData.SCARAB).setLetterSpacing(2);
             fTitleGold    = new Font().LoadedTexture(api, Sprite("fonts", "scarab_gold"), FontData.SCARAB).setLetterSpacing(2).setFallbackColor(c_gold);
@@ -116,8 +123,9 @@ namespace xSkillGilded {
 
             stopwatch    = Stopwatch.StartNew();
             checkAPIID   = api.Event.RegisterGameTickListener(onCheckAPI,   checkAPIInterval);
-            // checkLevelID = api.Event.RegisterGameTickListener(onCheckLevel, checkLevelInterval);
+            checkLevelID = api.Event.RegisterGameTickListener(onCheckLevel, checkLevelInterval);
 
+            effectBox = new(api);
         }
 
         public void initFonts(HashSet<string> fonts, HashSet<int> sizes) {
@@ -129,6 +137,23 @@ namespace xSkillGilded {
             if(isReady) api.Event.UnregisterGameTickListener(checkAPIID);
         }
 
+        public void onCheckLevel(float dt) {
+            if(previousLevels == null) return;
+            if(!config.lvPopupEnabled) return;
+
+            foreach(PlayerSkill skill in previousLevels.Keys) {
+                int currentLevel = skill.Level;
+
+                if(currentLevel > previousLevels[skill]) {
+                    LevelPopup levelPopup = new(api, skill);
+                    api.Gui.PlaySound(new AssetLocation("xskillgilded", "sounds/levelup.ogg"), false, .3f);
+                    api.Logger.Debug($"{skill.Skill.Name}, {skill.Skill.Id} Level up");
+                }
+
+                previousLevels[skill] = currentLevel;
+            }
+        }
+
         private bool getSkillData() {
             xLeveling        = api.ModLoader.GetModSystem<XLeveling>();
             if(xLeveling == null) return false;
@@ -136,11 +161,14 @@ namespace xSkillGilded {
             xLevelingClient  = xLeveling.IXLevelingAPI as XLevelingClient;
             if(xLevelingClient == null) return false;
 
+            effectBox.xLeveling = xLeveling;
+            effectBox.xLevelingClient = xLevelingClient;
+
             PlayerSkillSet playerSkillSet = xLevelingClient.LocalPlayerSkillSet;
             if(playerSkillSet == null) return false;
 
             skillGroups      = new Dictionary<string, List<PlayerSkill>>();
-            previousLevels    = new Dictionary<PlayerSkill, int>();
+            previousLevels   = new Dictionary<PlayerSkill, int>();
             allSkills        = new List<PlayerSkill>();
             specializeGroups = new List<PlayerAbility>();
 
@@ -982,15 +1010,19 @@ namespace xSkillGilded {
                 v[i] = str;
             }
 
-            switch (vpt) {
-                case 1: return String.Format(descBase, v[0]);
-                case 2: return String.Format(descBase, v[0], v[1]);
-                case 3: return String.Format(descBase, v[0], v[1], v[2]);
-                case 4: return String.Format(descBase, v[0], v[1], v[2], v[3]);
-                case 5: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4]);
-                case 6: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5]);
-                case 7: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5], v[6]);
-                case 8: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]);
+            try {
+                switch (vpt) {
+                    case 1: return String.Format(descBase, v[0]);
+                    case 2: return String.Format(descBase, v[0], v[1]);
+                    case 3: return String.Format(descBase, v[0], v[1], v[2]);
+                    case 4: return String.Format(descBase, v[0], v[1], v[2], v[3]);
+                    case 5: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4]);
+                    case 6: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5]);
+                    case 7: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5], v[6]);
+                    case 8: return String.Format(descBase, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]);
+                }
+            } catch {
+                return descBase;
             }
 
             return descBase;
@@ -998,9 +1030,17 @@ namespace xSkillGilded {
 
         private float drawSkillLevelDetail(PlayerSkill skill, float x, float y, float w, bool title) {
             float ys = y;
+            float sx = x;
 
             string skillTitle = skill.Skill.DisplayName;
-            Vector2 skillTitle_size = drawTextFont(title? fTitleGold : fSubtitleGold, skillTitle, x, y);
+            //LoadedTexture skillIcon = Sprite("skillicon", skill.Skill.Name);
+            //if(skillIcon.TextureId != 0) {
+            //    drawSetColor(c_grey, .1f);
+            //    drawImage(skillIcon, sx - _ui(8), y - _ui(16), _ui(64), _ui(64));
+            //    drawSetColor(c_white);
+            //}
+
+            Vector2 skillTitle_size = drawTextFont(title? fTitleGold : fSubtitleGold, skillTitle, sx, y);
 
             if(!title) {
                 int abilityPoint = skill.AbilityPoints;
@@ -1033,7 +1073,7 @@ namespace xSkillGilded {
             Vector2 skillLvTitle_size = drawTextFont(fSubtitle, skillLvTitle, x, y);
 
             float currXp = (float)Math.Round(skill.Experience);
-            float nextXp = (float)Math.Round(skill.Experience + skill.RequiredExperience);
+            float nextXp = (float)Math.Round(skill.RequiredExperience);
             float xpProgress = currXp / nextXp;
 
             drawSetColor(c_grey);
@@ -1186,12 +1226,10 @@ namespace xSkillGilded {
             return true;
         }
         
-        public static LoadedTexture Sprite(string cat, string name) {
-            return resourceLoader.Sprite($"xskillgilded:textures/gui/skilltree/{cat}/{name}.png"); 
-        }
-
         public override void Dispose() {
             base.Dispose();
+
+            api.Event.UnregisterGameTickListener(checkLevelID);
             // imguiModSystem.Draw   -= Draw;
             // imguiModSystem.Closed -= Close;
         }
