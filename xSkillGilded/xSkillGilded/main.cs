@@ -418,8 +418,8 @@ namespace xSkillGilded {
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding,    0);
             ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding,    0);
 
-            int windowWidth  = Math.Min(windowBaseWidth,  (int)window.OuterWidth  - 128); // 160
-            int windowHeight = Math.Min(windowBaseHeight, (int)window.OuterHeight - 128); // 160
+            int windowWidth  = Math.Min(windowBaseWidth,  window.OuterWidthInt  - 128); // 160
+            int windowHeight = Math.Min(windowBaseHeight, window.OuterHeightInt - 128); // 160
             windowX = (int)window.absOffsetX + size.Width / 2 - windowWidth / 2;
             windowY = (int)window.absOffsetY + size.Height / 2 - windowHeight / 2;
             
