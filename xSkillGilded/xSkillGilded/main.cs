@@ -10,6 +10,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Client;
 using Vintagestory.Client.NoObf;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
@@ -417,11 +418,13 @@ namespace xSkillGilded {
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding,    0);
             ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding,    0);
-
+            
             int windowWidth  = Math.Min(windowBaseWidth,  window.OuterWidthInt  - 128); // 160
             int windowHeight = Math.Min(windowBaseHeight, window.OuterHeightInt - 128); // 160
-            windowX = (int)window.absOffsetX + size.Width / 2 - windowWidth / 2;
-            windowY = (int)window.absOffsetY + size.Height / 2 - windowHeight / 2;
+            
+            OpenTK.Mathematics.Vector2 windowCenter = ((ClientPlatformWindows)ScreenManager.Platform).window.Bounds.Center;
+            windowX = (int)windowCenter.X - windowWidth / 2;
+            windowY = (int)windowCenter.Y - windowHeight / 2;
             
             windowPosX = windowX;
             windowPosY = windowY;
