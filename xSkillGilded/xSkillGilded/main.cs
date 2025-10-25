@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -425,7 +426,7 @@ namespace xSkillGilded {
             OpenTK.Mathematics.Vector2 windowCenter = ((ClientPlatformWindows)ScreenManager.Platform).window.Bounds.Center;
             windowX = (int)windowCenter.X - windowWidth / 2;
             windowY = (int)windowCenter.Y - windowHeight / 2;
-            
+
             windowPosX = windowX;
             windowPosY = windowY;
 

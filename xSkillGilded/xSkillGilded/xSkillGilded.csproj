@@ -47,11 +47,22 @@
       <HintPath>$(VINTAGE_STORY)/Lib/Microsoft.Data.Sqlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="OpenTK.Core">
+      <HintPath>$(VINTAGE_STORY)/Lib/OpenTK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.Mathematics">
+      <HintPath>$(VINTAGE_STORY)/Lib/OpenTK.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.Windowing.Common">
+      <HintPath>$(VINTAGE_STORY)/Lib/OpenTK.Windowing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.Windowing.Desktop">
+      <HintPath>$(VINTAGE_STORY)/Lib/OpenTK.Windowing.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="xlib">
       <HintPath>..\..\..\ref\xlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <PackageReference Include="OpenTK" Version="4.*" />
   </ItemGroup>
 
 <ItemGroup>
