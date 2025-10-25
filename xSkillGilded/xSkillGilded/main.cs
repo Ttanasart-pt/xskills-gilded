@@ -119,7 +119,7 @@ namespace xSkillGilded {
 
             tooltipVTML   = new List<VTMLblock>();
 
-            // probably the corecct way to load font
+            // probably the correct way to load fonts
             // FontManager.BeforeFontsLoaded += initFonts;
             // FTitle = FontManager.Fonts["scarab"];
 
@@ -130,7 +130,7 @@ namespace xSkillGilded {
             effectBox = new(api);
         }
 
-        public void initFonts(HashSet<string> fonts, HashSet<int> sizes) {
+        public void initFonts(HashSet<string> fonts, HashSet<int> sizes) { // UNUSED
             fonts.Add(Path.Combine(GamePaths.AssetsPath, "xskillgilded", "fonts", "scarab.ttf"));
         }
 
@@ -176,32 +176,34 @@ namespace xSkillGilded {
 
             bool firstGroup = true;
             foreach (PlayerSkill skill in playerSkillSet.PlayerSkills) {
-                if (skill.Skill.Enabled && !skill.Hidden && skill.PlayerAbilities.Count > 0) {
-                    string groupName = skill.Skill.Group;
+                if (!skill.Skill.Enabled) continue;
+                if (skill.Hidden) continue;
+                if (skill.PlayerAbilities.Count == 0) continue;
 
-                    if (!skillGroups.ContainsKey(groupName))
-                        skillGroups[groupName] = new List<PlayerSkill>();
+                string groupName = skill.Skill.Group;
+
+                if (!skillGroups.ContainsKey(groupName))
+                    skillGroups[groupName] = new List<PlayerSkill>();
                     
-                    List<PlayerSkill> groupList = skillGroups[groupName];
-                    groupList.Add(skill);
-                    allSkills.Add(skill);
-                    previousLevels[skill] = skill.Level;
+                List<PlayerSkill> groupList = skillGroups[groupName];
+                groupList.Add(skill);
+                allSkills.Add(skill);
+                previousLevels[skill] = skill.Level;
 
-                    if (firstGroup) {
-                        setPage(groupName);
-                        firstGroup = false;
-                    }
+                if (firstGroup) {
+                    setPage(groupName);
+                    firstGroup = false;
+                }
 
-                    foreach(PlayerAbility playerAbility in skill.PlayerAbilities) {
-                        Ability ability = playerAbility.Ability;
-                        foreach(Requirement req in ability.Requirements) {
-                            if(IsAbilityLimited(req)) {
-                                specializeGroups.Add(playerAbility);
-                                break;
-                            }
+                foreach(PlayerAbility playerAbility in skill.PlayerAbilities) {
+                    Ability ability = playerAbility.Ability;
+                    foreach(Requirement req in ability.Requirements) {
+                        if(IsAbilityLimited(req)) {
+                            specializeGroups.Add(playerAbility);
+                            break;
                         }
-                            
                     }
+                            
                 }
             }
 
@@ -279,6 +281,11 @@ namespace xSkillGilded {
                 if (buttonTiers[i] > 0) j++;
                 tierX.Add(0);
             }
+            
+            float minx =  99999;
+            float miny =  99999;
+            float maxx = -99999;
+            float maxy = -99999;
 
             foreach (AbilityButton button in abilityButtons.Values) {
                 int tier = buttonTierMap[button.tier];
@@ -290,14 +297,7 @@ namespace xSkillGilded {
 
                 button.x = _x;
                 button.y = _y;
-            }
-
-            float minx =  99999;
-            float miny =  99999;
-            float maxx = -99999;
-            float maxy = -99999;
-
-            foreach (AbilityButton button in abilityButtons.Values) {
+            
                 minx = Math.Min(minx, button.x);
                 miny = Math.Min(miny, button.y);
 
@@ -354,6 +354,11 @@ namespace xSkillGilded {
             int amo  = abilityList.Count;
             int col  = (int)Math.Floor(Math.Sqrt((double)amo));
             int indx = 0;
+            
+            float minx =  99999;
+            float miny =  99999;
+            float maxx = -99999;
+            float maxy = -99999;
 
             for(int i = 0; i < amo; i++) {
                 PlayerAbility ability = abilityList[i];
@@ -372,14 +377,7 @@ namespace xSkillGilded {
                 button.y = r * (buttonHeight + pad);
 
                 abilityButtons[name] = button;
-            }
-
-            float minx =  99999;
-            float miny =  99999;
-            float maxx = -99999;
-            float maxy = -99999;
-
-            foreach (AbilityButton button in abilityButtons.Values) {
+            
                 minx = Math.Min(minx, button.x);
                 miny = Math.Min(miny, button.y);
 
