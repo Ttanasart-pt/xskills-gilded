@@ -51,6 +51,7 @@
       <HintPath>..\..\..\ref\xlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <PackageReference Include="OpenTK" Version="4.*" />
   </ItemGroup>
 
 <ItemGroup>
